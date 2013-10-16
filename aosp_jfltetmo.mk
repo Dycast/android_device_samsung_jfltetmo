@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2011 The Android Open Source Project
+# Copyright 2013 The Android Open-Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+$(call inherit-product, device/samsung/jfltetmo/custom_jfltetmo.mk)
 
-add_lunch_combo full_jfltetmo-userdebug
-add_lunch_combo custom_jfltetmo-userdebug
+PRODUCT_NAME := aosp_jfltetmo

@@ -14,31 +14,26 @@
 
 #
 # This file is the build configuration for a full Android
-# build for jfltetmo hardware. This cleanly combines a set of
+# build for manta hardware. This cleanly combines a set of
 # device-specific aspects (drivers) with a device-agnostic
 # product configuration (apps). Except for a few implementation
 # details, it only fundamentally contains two inherit-product
-# lines, full and jfltetmo, hence its name.
+# lines, full and manta, hence its name.
 #
 
-# Live Wallpapers
-PRODUCT_PACKAGES += \
-        LiveWallpapers \
-        LiveWallpapersPicker \
-        MagicSmokeWallpapers \
-        VisualizationWallpapers \
-        librs_jni
+# Inherit from the common Open Source product configuration
+$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
 
-PRODUCT_PROPERTY_OVERRIDES := \
-        net.dns1=8.8.8.8 \
-        net.dns2=8.8.4.4
+# Inherit from our custom product configuration
+$(call inherit-product, vendor/custom/config/common.mk)
 
-# Inherit from those products. Most specific first.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
+# This is where we'd set a backup provider if we had one
+#$(call inherit-product, device/sample/products/backup_overlay.mk)
 $(call inherit-product, device/samsung/jfltetmo/device.mk)
 
-PRODUCT_NAME := full_jfltetmo
+# Discard inherited values and use our own instead.
+PRODUCT_NAME := custom_jfltetmo
 PRODUCT_DEVICE := jfltetmo
 PRODUCT_BRAND := samsung
-PRODUCT_MODEL := SGH-M919
 PRODUCT_MANUFACTURER := Samsung
+PRODUCT_MODEL := SGH-M919

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2011 The CyanogenMod Project
+# Copyright (C) 2011 The Android Open-Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,13 +14,87 @@
 # limitations under the License.
 #
 
-## (2) Also get non-open-source specific aspects if available
+
+
+
+# Include common makefile
+$(call inherit-product, device/samsung/smdk4412-common/common.mk)
+
+LOCAL_PATH := device/samsung/jfltetmo
+
+# Overlay
+DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
+
+# This device is xhdpi.  However the platform doesn't
+# currently contain all of the bitmaps at xhdpi density so
+# we do this little trick to fall back to the hdpi version
+# if the xhdpi doesn't exist.
+PRODUCT_AAPT_CONFIG := normal hdpi xhdpi
+PRODUCT_AAPT_PREF_CONFIG := xhdpi
+
+# Init files
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/rootdir/fstab.smdk4x12:root/fstab.smdk4x12 \
+    $(LOCAL_PATH)/rootdir/init.target.rc:root/init.target.rc
+
+# Audio
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/tiny_hw.xml:system/etc/sound/jfltetmo
+
+# Camera
+PRODUCT_PACKAGES += \
+    camera.smdk4x12
+
+# Sensors
+PRODUCT_PACKAGES += \
+    sensors.smdk4x12
+
+# Gps
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/gps.xml:system/etc/gps.xml
+
+# Product specific Packages
+PRODUCT_PACKAGES += \
+    libsecril-client \
+    libsecril-client-sap \
+    tinyplay
+
+# NFC
+PRODUCT_PACKAGES += \
+	nfc.exynos4 \
+    libnfc \
+    libnfc_jni \
+    Nfc \
+    Tag
+
+PRODUCT_COPY_FILES += \
+    packages/apps/Nfc/migrate_nfc.txt:system/etc/updatecmds/migrate_nfc.txt \
+    frameworks/base/nfc-extras/com.android.nfc_extras.xml:system/etc/permissions/com.android.nfc_extras.xml \
+    frameworks/native/data/etc/android.hardware.nfc.xml:system/etc/permissions/android.hardware.nfc.xml
+
+# NFCEE access control
+ifeq ($(TARGET_BUILD_VARIANT),user)
+    NFCEE_ACCESS_PATH := $(LOCAL_PATH)/configs/nfcee_access.xml
+else
+    NFCEE_ACCESS_PATH := $(LOCAL_PATH)/configs/nfcee_access_debug.xml
+endif
+
+PRODUCT_COPY_FILES += \
+    $(NFCEE_ACCESS_PATH):system/etc/nfcee_access.xml
+
+PRODUCT_PACKAGES += \
+    com.android.nfc_extras
+
+# RIL
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.telephony.ril_class=SamsungExynos4RIL \
+    mobiledata.interfaces=pdp0,wlan0,gprs,ppp0 \
+    ro.telephony.call_ring.multiple=false \
+    ro.telephony.call_ring.delay=3000
+
+# These are the hardware-specific features
+PRODUCT_COPY_FILES += \
+	frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
+    frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
+
 $(call inherit-product-if-exists, vendor/samsung/jfltetmo/jfltetmo-vendor.mk)
-
-## device overlays
-DEVICE_PACKAGE_OVERLAYS += device/samsung/jfltetmo/overlay
-## common overlays
-DEVICE_PACKAGE_OVERLAYS += device/samsung/jf-common/overlay-gsm
-
-# Inherit from jf-common
-$(call inherit-product, device/samsung/jf-common/jf-common.mk)
